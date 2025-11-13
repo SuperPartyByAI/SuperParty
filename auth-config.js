@@ -1,5 +1,9 @@
 // Supabase Configuration
+
 const SUPABASE_CONFIG = {
-    url: 'https://bkhzilgxuncyxpyhlbb.supabase.co',
-    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJraHppbGd4dW5jeXhweWhsYmIiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTczMTUyNTYwOCwiZXhwIjoyMDQ3MTAxNjA4fQ.q8P1vHhMLzqCN0xXz1vE_NhpV9GqKVGG2Y-4K2w4-1o'
+
+    url: 'https://bkhzilcjxuncyxpyhtbb.supabase.co',
+
+    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJraHppbGNqeHVuY3l4cHlodGJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI5ODE5ODAsImV4cCI6MjA3ODU1Nzk4MH0._nYGKr3QqjCBhRDJ8zXrcEpG5pUA980ZZIivjC1VXS8'
+
 };
