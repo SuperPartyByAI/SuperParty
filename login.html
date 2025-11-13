@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - SuperParty</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="auth-config.js"></script>
     <style>
         * {
             margin: 0;
@@ -64,7 +63,7 @@
         }
 
         .form-group {
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
 
         .form-group label {
@@ -124,16 +123,6 @@
             75% { transform: translateX(10px); }
         }
 
-        .warning-message {
-            background: #fff9e6;
-            border: 2px solid #ffd700;
-            color: #856404;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            display: none;
-        }
-
         .login-btn {
             width: 100%;
             padding: 15px;
@@ -173,20 +162,19 @@
             font-size: 0.9em;
         }
 
-        .login-link {
+        .signup-link {
             text-align: center;
             margin-top: 20px;
-            line-height: 1.8;
         }
 
-        .login-link a {
+        .signup-link a {
             color: #667eea;
             text-decoration: none;
             font-weight: 600;
             transition: color 0.3s ease;
         }
 
-        .login-link a:hover {
+        .signup-link a:hover {
             color: #764ba2;
             text-decoration: underline;
         }
@@ -225,7 +213,6 @@
         </div>
 
         <div id="errorMessage" class="error-message"></div>
-        <div id="warningMessage" class="warning-message"></div>
 
         <form id="loginForm">
             <div class="form-group">
@@ -233,7 +220,7 @@
                 <input 
                     type="email" 
                     id="email" 
-                    placeholder="exemplu@gmail.com" 
+                    placeholder="exemplu@email.com" 
                     required
                 >
             </div>
@@ -244,7 +231,7 @@
                     <input 
                         type="password" 
                         id="password" 
-                        placeholder="••••••••" 
+                        placeholder="Parola ta" 
                         required
                     >
                     <button type="button" class="toggle-password" onclick="togglePassword()">👁️</button>
@@ -252,47 +239,23 @@
             </div>
 
             <button type="submit" class="login-btn" id="loginBtn">
-                <span id="btnText">🚀 Intră în Dashboard</span>
+                <span id="btnText">🚀 Intră în cont</span>
                 <div class="spinner" id="spinner"></div>
             </button>
         </form>
 
         <div class="divider">sau</div>
 
-        <div class="login-link">
-            Nu ai cont? <a href="signup.html">Înregistrează-te aici</a>
-            <br>
-            <a href="#">Am uitat parola</a>
+        <div class="signup-link">
+            Nu ai cont? <a href="signup.html">Înregistrează-te</a>
         </div>
     </div>
 
     <script>
-        const supabase = window.supabase.createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey);
-
-        let loginAttempts = 0;
-        const MAX_ATTEMPTS = 3;
-        const LOCKOUT_TIME = 15 * 60 * 1000;
-
-        function isLockedOut() {
-            const lockoutUntil = localStorage.getItem('lockoutUntil');
-            if (lockoutUntil) {
-                const now = Date.now();
-                if (now < parseInt(lockoutUntil)) {
-                    const remainingMinutes = Math.ceil((parseInt(lockoutUntil) - now) / 60000);
-                    return remainingMinutes;
-                } else {
-                    localStorage.removeItem('lockoutUntil');
-                    localStorage.removeItem('loginAttempts');
-                    loginAttempts = 0;
-                }
-            }
-            return false;
-        }
-
-        const storedAttempts = localStorage.getItem('loginAttempts');
-        if (storedAttempts) {
-            loginAttempts = parseInt(storedAttempts);
-        }
+        const supabase = window.supabase.createClient(
+            'https://bkhzilcjxuncyxpyhtbb.supabase.co',
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJraHppbGNqeHVuY3l4cHlodGJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI5ODE5ODAsImV4cCI6MjA3ODU1Nzk4MH0._nYGKr3QqjCBhRDJ8zXrcEpG5pUA980ZZIivjC1VXS8'
+        );
 
         function togglePassword() {
             const passwordInput = document.getElementById('password');
@@ -309,28 +272,13 @@
             }, 5000);
         }
 
-        function showWarning(message) {
-            const warningDiv = document.getElementById('warningMessage');
-            warningDiv.textContent = '⚠️ ' + message;
-            warningDiv.style.display = 'block';
-        }
-
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            const lockoutMinutes = isLockedOut();
-            if (lockoutMinutes) {
-                showError(`Cont blocat. Încearcă din nou în ${lockoutMinutes} minute.`);
-                return;
-            }
-
-            const email = document.getElementById('email').value;
+            const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
 
-            if (loginAttempts > 0) {
-                const remainingAttempts = MAX_ATTEMPTS - loginAttempts;
-                showWarning(`Mai ai ${remainingAttempts} încercări înainte de blocarea contului`);
-            }
+            document.getElementById('errorMessage').style.display = 'none';
 
             const loginBtn = document.getElementById('loginBtn');
             const btnText = document.getElementById('btnText');
@@ -340,57 +288,26 @@
             btnText.textContent = 'Se conectează...';
             spinner.style.display = 'block';
 
-            try {
-                const { data, error } = await supabase.auth.signInWithPassword({
-                    email: email,
-                    password: password,
-                });
+            const { data, error } = await supabase.auth.signInWithPassword({
+                email: email,
+                password: password
+            });
 
-                if (error) {
-                    loginAttempts++;
-                    localStorage.setItem('loginAttempts', loginAttempts.toString());
-
-                    if (loginAttempts >= MAX_ATTEMPTS) {
-                        const lockoutUntil = Date.now() + LOCKOUT_TIME;
-                        localStorage.setItem('lockoutUntil', lockoutUntil.toString());
-                        showError('Cont blocat pentru 15 minute din cauza încercărilor eșuate.');
-                    } else {
-                        const remainingAttempts = MAX_ATTEMPTS - loginAttempts;
-                        showError(`Email sau parolă incorectă. Mai ai ${remainingAttempts} încercări.`);
-                    }
-
-                    loginBtn.disabled = false;
-                    btnText.textContent = '🚀 Intră în Dashboard';
-                    spinner.style.display = 'none';
-                    return;
-                }
-
-                localStorage.removeItem('loginAttempts');
-                localStorage.removeItem('lockoutUntil');
-
-                const { data: userData, error: userError } = await supabase
-                    .from('users')
-                    .select('*')
-                    .eq('email', email)
-                    .single();
-
-                if (userError) {
-                    console.error('Error fetching user data:', userError);
-                }
-
-                window.location.href = 'dashboard.html';
-
-            } catch (err) {
-                console.error('Login error:', err);
-                showError('Eroare la conectare. Încearcă din nou.');
+            if (error) {
+                showError('Email sau parolă incorectă!');
                 loginBtn.disabled = false;
-                btnText.textContent = '🚀 Intră în Dashboard';
+                btnText.textContent = '🚀 Intră în cont';
                 spinner.style.display = 'none';
+                return;
             }
+
+            // Success - redirect to dashboard
+            window.location.href = 'dashboard.html';
         });
 
+        // Check if already logged in
         supabase.auth.onAuthStateChange((event, session) => {
-            if (event === 'SIGNED_IN' && session) {
+            if (session) {
                 window.location.href = 'dashboard.html';
             }
         });
