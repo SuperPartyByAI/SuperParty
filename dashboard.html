@@ -3,350 +3,185 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - SuperParty</title>
+    <title>SuperParty 🎉 - Dashboard</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f5f5f5;
-            min-height: 100vh;
-        }
-
-        .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-        .header-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo-section h1 {
-            font-size: 2em;
-            margin-bottom: 5px;
-        }
-
-        .logo-section p {
-            opacity: 0.9;
-            font-size: 0.9em;
-        }
-
-        .user-section {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .user-info {
-            text-align: right;
-        }
-
-        .user-name {
-            font-weight: 600;
-            font-size: 1.1em;
-        }
-
-        .user-role {
-            font-size: 0.85em;
-            opacity: 0.9;
-        }
-
-        .logout-btn {
-            padding: 10px 20px;
-            background: rgba(255,255,255,0.2);
-            border: 2px solid white;
-            color: white;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .logout-btn:hover {
-            background: white;
-            color: #667eea;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 40px auto;
-            padding: 0 20px;
-        }
-
-        .welcome-card {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
-            animation: slideIn 0.5s ease-out;
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .welcome-card h2 {
-            color: #333;
-            font-size: 2em;
-            margin-bottom: 10px;
-        }
-
-        .welcome-card p {
-            color: #666;
-            font-size: 1.1em;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .stat-card {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .stat-icon {
-            font-size: 2.5em;
-            margin-bottom: 10px;
-        }
-
-        .stat-label {
-            color: #666;
-            font-size: 0.9em;
-            margin-bottom: 5px;
-        }
-
-        .stat-value {
-            color: #333;
-            font-size: 2em;
-            font-weight: 700;
-        }
-
-        .quick-actions {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-        .quick-actions h3 {
-            color: #333;
-            margin-bottom: 20px;
-            font-size: 1.5em;
-        }
-
-        .action-buttons {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-        }
-
-        .action-btn {
-            padding: 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 1em;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .action-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
-        }
-
-        .loading {
-            text-align: center;
-            padding: 50px;
-            font-size: 1.2em;
-            color: #666;
-        }
-
-        @media (max-width: 768px) {
-            .header-content {
-                flex-direction: column;
-                gap: 15px;
-                text-align: center;
-            }
-
-            .user-section {
-                flex-direction: column;
-            }
-
-            .user-info {
-                text-align: center;
-            }
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; }
+        .sidebar { width: 280px; background: white; box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1); display: flex; flex-direction: column; position: fixed; height: 100vh; z-index: 100; }
+        .sidebar-header { padding: 35px 20px 30px 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; position: relative; overflow: hidden; text-align: center; }
+        .sidebar-header::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px); background-size: 50px 50px; animation: particlesMove 20s linear infinite; }
+        @keyframes particlesMove { 0% { transform: translate(0, 0); } 100% { transform: translate(50px, 50px); } }
+        .sidebar-header h1 { font-size: 28px; margin-bottom: 15px; position: relative; z-index: 1; font-weight: 800; letter-spacing: 1px; animation: glow 2s ease-in-out infinite; text-align: center; }
+        @keyframes glow { 0%, 100% { text-shadow: 0 0 10px rgba(255,255,255,0.5), 0 0 20px rgba(255,255,255,0.3); } 50% { text-shadow: 0 0 20px rgba(255,255,255,0.8), 0 0 30px rgba(255,255,255,0.5); } }
+        .sidebar-header .by-ai { font-size: 16px; opacity: 0.95; position: relative; z-index: 1; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 700; letter-spacing: 2px; width: 100%; }
+        .ai-badge { background: rgba(255,255,255,0.25); padding: 6px 16px; border-radius: 25px; font-size: 16px; font-weight: 800; animation: pulse 2s ease-in-out infinite; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 0.9; } 50% { transform: scale(1.05); opacity: 1; } }
+        .ai-icon { display: inline-block; animation: rotate 3s linear infinite; font-size: 20px; }
+        @keyframes rotate { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .ai-chat-button { position: fixed; bottom: 30px; right: 30px; z-index: 1000; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 50px; padding: 18px 28px; font-size: 16px; font-weight: 700; cursor: pointer; box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4); display: flex; align-items: center; gap: 12px; transition: all 0.3s ease; animation: floatButton 3s ease-in-out infinite; }
+        .ai-chat-button:hover { transform: translateY(-5px) scale(1.05); box-shadow: 0 12px 35px rgba(102, 126, 234, 0.6); }
+        @keyframes floatButton { 0%, 100% { transform: translateY(0px); box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4); } 50% { transform: translateY(-10px); box-shadow: 0 15px 35px rgba(102, 126, 234, 0.5); } }
+        .ai-chat-icon { font-size: 24px; animation: robotTalk 1s ease-in-out infinite; }
+        @keyframes robotTalk { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(-10deg); } 75% { transform: rotate(10deg); } }
+        .ai-chat-pulse { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100%; height: 100%; border-radius: 50px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); opacity: 0.6; animation: pulseRing 2s ease-out infinite; pointer-events: none; }
+        @keyframes pulseRing { 0% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; } 100% { transform: translate(-50%, -50%) scale(1.5); opacity: 0; } }
+        .sidebar-nav { flex: 1; overflow-y: auto; padding: 20px 0; }
+        .menu-item { padding: 15px 20px; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 12px; color: #374151; font-weight: 500; border-left: 3px solid transparent; }
+        .menu-item:hover { background: #f3f4f6; border-left-color: #667eea; color: #667eea; }
+        .menu-item.active { background: linear-gradient(90deg, rgba(102, 126, 234, 0.1) 0%, transparent 100%); border-left-color: #667eea; color: #667eea; font-weight: 600; }
+        .menu-section { padding: 15px 20px 10px 20px; font-size: 12px; text-transform: uppercase; color: #9ca3af; font-weight: 700; letter-spacing: 1px; }
+        .sidebar-footer { padding: 20px; border-top: 1px solid #e5e7eb; }
+        .user-info { display: flex; align-items: center; gap: 12px; padding: 12px; background: #f9fafb; border-radius: 12px; margin-bottom: 12px; }
+        .user-avatar { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 18px; }
+        .user-details { flex: 1; }
+        .user-name { font-weight: 600; color: #111827; font-size: 14px; }
+        .user-role { font-size: 12px; color: #6b7280; }
+        .logout-btn { width: 100%; padding: 12px; background: white; border: 2px solid #e5e7eb; border-radius: 10px; color: #374151; font-weight: 600; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .logout-btn:hover { background: #fee; border-color: #fcc; color: #dc2626; }
+        .main-content { margin-left: 280px; flex: 1; padding: 40px; min-height: 100vh; }
+        .page { display: none; animation: fadeIn 0.5s; }
+        .page.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .page-header { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 30px; }
+        .page-header h2 { font-size: 32px; color: #111827; margin-bottom: 10px; }
+        .page-header p { color: #6b7280; font-size: 16px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .stat-card { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 20px; transition: transform 0.3s; }
+        .stat-card:hover { transform: translateY(-5px); }
+        .stat-icon { width: 60px; height: 60px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 28px; }
+        .stat-icon.blue { background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); }
+        .stat-icon.green { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
+        .stat-icon.purple { background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); }
+        .stat-icon.orange { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
+        .stat-details { flex: 1; }
+        .stat-label { color: #6b7280; font-size: 14px; margin-bottom: 5px; }
+        .stat-value { font-size: 32px; font-weight: 700; color: #111827; }
+        .quick-actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
+        .action-card { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); cursor: pointer; transition: all 0.3s; text-align: center; }
+        .action-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(102, 126, 234, 0.2); }
+        .action-icon { font-size: 48px; margin-bottom: 15px; }
+        .action-title { font-weight: 600; color: #111827; margin-bottom: 5px; }
+        .action-desc { font-size: 14px; color: #6b7280; }
+        .password-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: 1001; align-items: center; justify-content: center; }
+        .password-modal-content { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); max-width: 400px; width: 90%; animation: modalSlideIn 0.3s ease-out; }
+        @keyframes modalSlideIn { from { opacity: 0; transform: translateY(-50px); } to { opacity: 1; transform: translateY(0); } }
+        .password-modal-content h3 { font-size: 24px; margin-bottom: 10px; color: #111827; }
+        .password-modal-content input { width: 100%; padding: 15px; border: 2px solid #e5e7eb; border-radius: 10px; font-size: 24px; text-align: center; letter-spacing: 10px; margin: 20px 0; }
+        .password-modal-buttons { display: flex; gap: 10px; }
+        .password-cancel, .password-submit { flex: 1; padding: 15px; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; transition: all 0.3s; }
+        .password-cancel { background: #f3f4f6; color: #374151; }
+        .password-cancel:hover { background: #e5e7eb; }
+        .password-submit { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+        .password-submit:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3); }
+        .secret-content { display: none; }
+        .secret-content.active { display: block; }
+        @media (max-width: 768px) { .sidebar { width: 100%; position: relative; height: auto; } .main-content { margin-left: 0; } .stats-grid, .quick-actions { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
-    <div class="header">
-        <div class="header-content">
-            <div class="logo-section">
-                <h1>🎉 SuperParty</h1>
-                <p>Sistem de management evenimente</p>
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h1>🎉 SuperParty</h1>
+            <div class="by-ai"><span>by</span><span class="ai-badge"><span class="ai-icon">🤖</span><span>AI</span></span></div>
+        </div>
+        <div class="sidebar-nav">
+            <div class="menu-section">PRINCIPAL</div>
+            <div class="menu-item active" onclick="showPage('acasa')">🎊 Acasă</div>
+            <div class="menu-item" onclick="showPage('noteaza-eveniment')">➕ Notează Eveniment Nou</div>
+            <div class="menu-item" onclick="showPage('petreceri-nealocate')">📋 Petreceri Nealocate</div>
+            <div class="menu-item" onclick="showPage('ce-petreceri-am')">🎊 Ce Petreceri Am</div>
+            <div class="menu-section">VIZUALIZARE</div>
+            <div class="menu-item" onclick="showPage('calendar')">📅 Calendarul Anului</div>
+            <div class="menu-item" onclick="showPage('lista-petreceri')">🎈 Listă Petreceri</div>
+            <div class="menu-section">MANAGEMENT</div>
+            <div class="menu-item" onclick="showPage('soferi')">🚗 Evenimente cu Șoferi</div>
+            <div class="menu-item" onclick="showPage('cu-factura')">🧾 Cu Factură</div>
+            <div class="menu-item" onclick="showPage('echipa')">👥 Echipa</div>
+            <div class="menu-item" onclick="showPage('inventar')">📦 Inventar</div>
+            <div class="menu-item" onclick="showPage('piniata')">🎯 Piniata</div>
+            <div class="menu-section">VERIFICARE</div>
+            <div class="menu-item" onclick="showPage('verifica-formular')">📸 Verifică Formular cu Poză</div>
+            <div class="menu-section">SECURITATE</div>
+            <div class="menu-item" onclick="checkPasswordAndShowSecret()">🔐 Pagină Secretă</div>
+            <div id="secretMenuSection" style="display: none;">
+                <div class="menu-section">🔒 MENIU SECRET</div>
+                <div class="menu-item" onclick="showSecretPage('bifeaza-evenimente-secret')">✅ Bifează Evenimente Secret</div>
+                <div class="menu-item" onclick="showSecretPage('genereaza-coduri-secret')">🔑 Generează Coduri Secret</div>
             </div>
-            <div class="user-section">
-                <div class="user-info">
+        </div>
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <div class="user-avatar" id="userAvatar">U</div>
+                <div class="user-details">
                     <div class="user-name" id="userName">Se încarcă...</div>
                     <div class="user-role" id="userRole">-</div>
                 </div>
-                <button class="logout-btn" onclick="logout()">🚪 Ieșire</button>
             </div>
+            <button class="logout-btn" onclick="logout()">🚪 Deconectare</button>
         </div>
     </div>
-
-    <div class="container">
-        <div id="loadingMessage" class="loading">
-            Se încarcă datele...
-        </div>
-
-        <div id="dashboardContent" style="display: none;">
-            <div class="welcome-card">
-                <h2 id="welcomeMessage">Bine ai venit!</h2>
-                <p>Aici vei găsi toate informațiile tale și acțiuni rapide.</p>
+    <div class="main-content">
+        <div class="page active" id="acasa">
+            <div class="page-header">
+                <h2>🎊 Bine ai venit!</h2>
+                <p id="welcomeMessage">Dashboard SuperParty - Gestionează evenimente rapid și eficient</p>
             </div>
-
             <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-icon">📅</div>
-                    <div class="stat-label">Evenimente programate</div>
-                    <div class="stat-value" id="eventCount">0</div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-icon">✅</div>
-                    <div class="stat-label">Evenimente finalizate</div>
-                    <div class="stat-value" id="completedCount">0</div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-icon">⏰</div>
-                    <div class="stat-label">În așteptare</div>
-                    <div class="stat-value" id="pendingCount">0</div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-icon">💰</div>
-                    <div class="stat-label">Venituri totale</div>
-                    <div class="stat-value" id="revenueCount">0 RON</div>
-                </div>
+                <div class="stat-card"><div class="stat-icon blue">📅</div><div class="stat-details"><div class="stat-label">Evenimente programate</div><div class="stat-value" id="eventCount">0</div></div></div>
+                <div class="stat-card"><div class="stat-icon green">✅</div><div class="stat-details"><div class="stat-label">Evenimente finalizate</div><div class="stat-value" id="completedCount">0</div></div></div>
+                <div class="stat-card"><div class="stat-icon purple">⏰</div><div class="stat-details"><div class="stat-label">În așteptare</div><div class="stat-value" id="pendingCount">0</div></div></div>
+                <div class="stat-card"><div class="stat-icon orange">💰</div><div class="stat-details"><div class="stat-label">Venituri totale</div><div class="stat-value" id="revenueCount">0 RON</div></div></div>
             </div>
-
+            <div class="page-header"><h2>🚀 Acțiuni Rapide</h2><p>Accesează rapid cele mai folosite funcționalități</p></div>
             <div class="quick-actions">
-                <h3>🚀 Acțiuni rapide</h3>
-                <div class="action-buttons">
-                    <button class="action-btn">
-                        📝 Eveniment nou
-                    </button>
-                    <button class="action-btn">
-                        👥 Echipa mea
-                    </button>
-                    <button class="action-btn">
-                        📊 Rapoarte
-                    </button>
-                    <button class="action-btn">
-                        ⚙️ Setări
-                    </button>
-                </div>
+                <div class="action-card" onclick="showPage('noteaza-eveniment')"><div class="action-icon">➕</div><div class="action-title">Eveniment Nou</div><div class="action-desc">Adaugă un eveniment rapid</div></div>
+                <div class="action-card" onclick="showPage('calendar')"><div class="action-icon">📅</div><div class="action-title">Calendar</div><div class="action-desc">Vezi toate evenimentele</div></div>
+                <div class="action-card" onclick="showPage('echipa')"><div class="action-icon">👥</div><div class="action-title">Echipa</div><div class="action-desc">Gestionează echipa ta</div></div>
+                <div class="action-card" onclick="showPage('inventar')"><div class="action-icon">📦</div><div class="action-title">Inventar</div><div class="action-desc">Verifică stocul</div></div>
+            </div>
+        </div>
+        <div class="page" id="noteaza-eveniment"><div class="page-header"><h2>➕ Notează Eveniment Nou</h2><p>Completează formularul pentru a adăuga un eveniment nou</p></div></div>
+        <div class="page" id="petreceri-nealocate"><div class="page-header"><h2>📋 Petreceri Nealocate</h2><p>Lista petrecerilor care așteaptă să fie alocate unui șofer</p></div></div>
+        <div class="page" id="ce-petreceri-am"><div class="page-header"><h2>🎊 Ce Petreceri Am</h2><p>Petrecerile pe care le-ai notat tu - bazat pe codul tău de trainer</p></div></div>
+        <div class="page" id="calendar"><div class="page-header"><h2>📅 Calendarul Anului</h2><p>Vizualizare calendar cu toate evenimentele</p></div></div>
+        <div class="page" id="lista-petreceri"><div class="page-header"><h2>🎈 Listă Petreceri</h2><p>Toate petrecerile înregistrate în sistem</p></div></div>
+        <div class="page" id="soferi"><div class="page-header"><h2>🚗 Evenimente cu Șoferi</h2><p>Managementul transportului pentru evenimente</p></div></div>
+        <div class="page" id="cu-factura"><div class="page-header"><h2>🧾 Cu Factură</h2><p>Evenimente care necesită facturare</p></div></div>
+        <div class="page" id="echipa"><div class="page-header"><h2>👥 Echipa</h2><p>Managementul membrilor echipei</p></div></div>
+        <div class="page" id="inventar"><div class="page-header"><h2>📦 Inventar</h2><p>Gestionare inventar și echipamente</p></div></div>
+        <div class="page" id="piniata"><div class="page-header"><h2>🎯 Piniata</h2><p>Statistici și management piniate</p></div></div>
+        <div class="page" id="verifica-formular"><div class="page-header"><h2>📸 Verifică Formular cu Poză</h2><p>Încarcă poza cu formularul primit și verifică data de notare pentru puncte</p></div></div>
+        <div class="page" id="pagina-secreta">
+            <div class="page-header"><h2>🔐 Pagină Secretă</h2><p>Acces special pentru administratori</p></div>
+            <div class="secret-content active" id="bifeaza-evenimente-secret"><div class="page-header"><h2>✅ Bifează Evenimente Secret</h2><p>Marchează evenimentele finalizate</p></div></div>
+            <div class="secret-content" id="genereaza-coduri-secret"><div class="page-header"><h2>🔑 Generează Coduri Secret</h2><p>Creează coduri de acces pentru utilizatori noi</p></div></div>
+        </div>
+    </div>
+    <button class="ai-chat-button" onclick="alert('🤖 Chat AI în curs de dezvoltare!')"><div class="ai-chat-pulse"></div><span class="ai-chat-icon">🤖</span><span>Chat AI</span></button>
+    <div class="password-modal" id="passwordModal">
+        <div class="password-modal-content">
+            <h3>🔒 Acces Restricționat</h3>
+            <p style="color: #6b7280; margin-bottom: 20px;">Introdu parola pentru a accesa pagina secretă</p>
+            <input type="password" id="passwordInput" placeholder="••••" maxlength="4" autofocus>
+            <div class="password-modal-buttons">
+                <button class="password-cancel" onclick="closePasswordModal()">❌ Anulează</button>
+                <button class="password-submit" onclick="submitPassword()">✅ Accesează</button>
             </div>
         </div>
     </div>
-
     <script>
-        const supabase = window.supabase.createClient(
-            'https://bkhzilcjxuncyxpyhtbb.supabase.co',
-            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJraHppbGNqeHVuY3l4cHlodGJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI5ODE5ODAsImV4cCI6MjA3ODU1Nzk4MH0._nYGKr3QqjCBhRDJ8zXrcEpG5pUA980ZZIivjC1VXS8'
-        );
-
-        async function checkAuth() {
-            const { data: { session } } = await supabase.auth.getSession();
-            
-            if (!session) {
-                window.location.href = 'login.html';
-                return;
-            }
-
-            loadUserData(session.user);
-        }
-
-        async function loadUserData(user) {
-            try {
-                const { data, error } = await supabase
-                    .from('users')
-                    .select('*')
-                    .eq('id', user.id)
-                    .single();
-
-                if (error) {
-                    console.error('Error loading user data:', error);
-                    document.getElementById('userName').textContent = user.email;
-                    document.getElementById('userRole').textContent = 'Utilizator';
-                } else {
-                    document.getElementById('userName').textContent = data.full_name || user.email;
-                    document.getElementById('userRole').textContent = data.role === 'admin' ? '👑 Administrator' : '👤 Angajat';
-                    document.getElementById('welcomeMessage').textContent = `Bine ai venit, ${data.full_name || 'utilizator'}! 👋`;
-                }
-
-                document.getElementById('loadingMessage').style.display = 'none';
-                document.getElementById('dashboardContent').style.display = 'block';
-            } catch (err) {
-                console.error('Error:', err);
-                document.getElementById('loadingMessage').textContent = 'Eroare la încărcarea datelor';
-            }
-        }
-
-        async function logout() {
-            await supabase.auth.signOut();
-            window.location.href = 'login.html';
-        }
-
-        // Check auth on load
+        const supabase = window.supabase.createClient('https://bkhzilcjxuncyxpyhtbb.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJraHppbGNqeHVuY3l4cHlodGJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI5ODE5ODAsImV4cCI6MjA3ODU1Nzk4MH0._nYGKr3QqjCBhRDJ8zXrcEpG5pUA980ZZIivjC1VXS8');
+        async function checkAuth(){const{data:{session}}=await supabase.auth.getSession();if(!session){window.location.href='login.html';return;}loadUserData(session.user);}
+        async function loadUserData(user){try{const{data,error}=await supabase.from('users').select('*').eq('id',user.id).single();if(error){console.error('Error loading user data:',error);document.getElementById('userName').textContent=user.email;document.getElementById('userRole').textContent='Utilizator';document.getElementById('userAvatar').textContent=user.email.charAt(0).toUpperCase();}else{const firstName=data.full_name?data.full_name.split(' ')[0]:user.email;document.getElementById('userName').textContent=data.full_name||user.email;document.getElementById('userRole').textContent=data.role==='admin'?'👑 Administrator':'👤 Angajat';document.getElementById('userAvatar').textContent=firstName.charAt(0).toUpperCase();document.getElementById('welcomeMessage').textContent=`Bine ai venit, ${firstName}! 👋`;}}catch(err){console.error('Error:',err);}}
+        async function logout(){await supabase.auth.signOut();window.location.href='login.html';}
+        function showPage(pageId){const pages=document.querySelectorAll('.page');pages.forEach(page=>page.classList.remove('active'));const selectedPage=document.getElementById(pageId);if(selectedPage){selectedPage.classList.add('active');}const menuItems=document.querySelectorAll('.menu-item');menuItems.forEach(item=>item.classList.remove('active'));const currentMenuItem=Array.from(menuItems).find(item=>item.getAttribute('onclick')&&item.getAttribute('onclick').includes(pageId));if(currentMenuItem){currentMenuItem.classList.add('active');}if(pageId!=='pagina-secreta'){document.getElementById('secretMenuSection').style.display='none';}}
+        function checkPasswordAndShowSecret(){const modal=document.getElementById('passwordModal');const input=document.getElementById('passwordInput');modal.style.display='flex';input.value='';setTimeout(()=>{input.focus();},100);input.onkeypress=function(e){if(e.key==='Enter'){submitPassword();}};}
+        function closePasswordModal(){document.getElementById('passwordModal').style.display='none';document.getElementById('passwordInput').value='';}
+        function submitPassword(){const password=document.getElementById('passwordInput').value;if(password==='1234'){closePasswordModal();showPage('pagina-secreta');document.getElementById('secretMenuSection').style.display='block';showSecretPage('bifeaza-evenimente-secret');setTimeout(()=>{alert('✅ Acces permis! Bine ai venit în pagina secretă!');},300);}else{alert('❌ Parolă greșită! Încearcă din nou.');document.getElementById('passwordInput').value='';document.getElementById('passwordInput').focus();}}
+        function showSecretPage(pageId){const secretSections=document.querySelectorAll('.secret-content');secretSections.forEach(section=>{section.style.display='none';section.classList.remove('active');});const selectedSection=document.getElementById(pageId);if(selectedSection){selectedSection.style.display='block';selectedSection.classList.add('active');}const secretMenuItems=document.querySelectorAll('#secretMenuSection .menu-item');secretMenuItems.forEach(item=>item.classList.remove('active'));const currentMenuItem=Array.from(secretMenuItems).find(item=>item.getAttribute('onclick')&&item.getAttribute('onclick').includes(pageId));if(currentMenuItem){currentMenuItem.classList.add('active');}}
         checkAuth();
-
-        // Listen for auth changes
-        supabase.auth.onAuthStateChange((event, session) => {
-            if (event === 'SIGNED_OUT') {
-                window.location.href = 'login.html';
-            }
-        });
+        supabase.auth.onAuthStateChange((event,session)=>{if(event==='SIGNED_OUT'){window.location.href='login.html';}});
     </script>
 </body>
 </html>
