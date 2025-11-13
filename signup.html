@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Înregistrare - SuperParty</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="auth-config.js"></script>
     <style>
         * {
             margin: 0;
@@ -320,9 +319,11 @@
     </div>
 
     <script>
-        const supabase = window.supabase.createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey);
+        const supabase = window.supabase.createClient(
+            'https://bkhzilgxuncyxpyhlbb.supabase.co',
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJraHppbGd4dW5jeXhweWhsYmIiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTczMTUyNTYwOCwiZXhwIjoyMDQ3MTAxNjA4fQ.q8P1vHhMLzqCN0xXz1vE_NhpV9GqKVGG2Y-4K2w4-1o'
+        );
 
-        // Toggle password visibility
         function togglePassword() {
             const passwordInput = document.getElementById('password');
             const type = passwordInput.type === 'password' ? 'text' : 'password';
@@ -335,7 +336,6 @@
             passwordInput.type = type;
         }
 
-        // Show messages
         function showError(message) {
             const errorDiv = document.getElementById('errorMessage');
             errorDiv.textContent = '❌ ' + message;
@@ -360,7 +360,6 @@
             }, 5000);
         }
 
-        // Validate license key - FIXED VERSION
         async function validateLicenseKey(code) {
             try {
                 console.log('Checking license key:', code.toUpperCase());
@@ -394,7 +393,6 @@
             }
         }
 
-        // Mark license key as used
         async function markLicenseKeyAsUsed(code, email) {
             const { error } = await supabase
                 .from('license_keys')
@@ -408,7 +406,6 @@
             return !error;
         }
 
-        // Handle signup
         document.getElementById('signupForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
@@ -418,24 +415,20 @@
             const password = document.getElementById('password').value;
             const confirmPassword = document.getElementById('confirmPassword').value;
 
-            // Hide messages
             document.getElementById('errorMessage').style.display = 'none';
             document.getElementById('successMessage').style.display = 'none';
             document.getElementById('warningMessage').style.display = 'none';
 
-            // Validate passwords match
             if (password !== confirmPassword) {
                 showError('Parolele nu se potrivesc!');
                 return;
             }
 
-            // Validate password strength
             if (password.length < 8) {
                 showError('Parola trebuie să aibă minim 8 caractere!');
                 return;
             }
 
-            // Show loading
             const signupBtn = document.getElementById('signupBtn');
             const btnText = document.getElementById('btnText');
             const spinner = document.getElementById('spinner');
@@ -444,7 +437,6 @@
             btnText.textContent = 'Se verifică codul...';
             spinner.style.display = 'block';
 
-            // Step 1: Validate license key
             const licenseValidation = await validateLicenseKey(licenseKey);
             
             if (!licenseValidation.valid) {
@@ -457,7 +449,6 @@
 
             btnText.textContent = 'Se creează contul...';
 
-            // Step 2: Create auth user
             const { data: authData, error: authError } = await supabase.auth.signUp({
                 email: email,
                 password: password,
@@ -478,7 +469,6 @@
 
             btnText.textContent = 'Se finalizează...';
 
-            // Step 3: Create user in public.users table
             const { error: userError } = await supabase
                 .from('users')
                 .insert([{
@@ -494,14 +484,12 @@
                 showWarning('Cont creat, dar cu erori. Contactează administratorul.');
             }
 
-            // Step 4: Mark license key as used
             const keyMarked = await markLicenseKeyAsUsed(licenseKey, email);
             
             if (!keyMarked) {
                 console.error('Failed to mark license key as used');
             }
 
-            // Success!
             showSuccess('Cont creat cu succes! Redirecționare către login...');
             
             setTimeout(() => {
@@ -509,7 +497,6 @@
             }, 2000);
         });
 
-        // Auto-format license key
         document.getElementById('licenseKey').addEventListener('input', (e) => {
             e.target.value = e.target.value.toUpperCase();
         });
