@@ -748,6 +748,10 @@
                     <span class="menu-icon">💵</span>
                     <span>Target Vânzări</span>
                 </div>
+                <div class="menu-item" onclick="showSecretPage('genereaza-coduri-secret')" style="font-size: 14px; padding: 12px 20px;">
+                    <span class="menu-icon">🔑</span>
+                    <span>Generează Coduri</span>
+                </div>
             </div>
             
             <!-- ADMIN MENU - Dezactivat
@@ -1768,6 +1772,64 @@
                     <div style="padding: 20px; background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%); border-radius: 12px; text-align: center;">
                         <div style="font-size: 24px; font-weight: 900; color: #10b981;">€450,000</div>
                         <div style="font-size: 14px; color: #6b7280; margin-top: 5px;">Venituri Anuale</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Generează Coduri Secret -->
+        <div class="secret-content" id="genereaza-coduri-secret" style="display: none;">
+            <div class="page-header">
+                <h2>🔑 Generează Coduri de Acces</h2>
+                <p>Creează coduri unice pentru noi angajați</p>
+            </div>
+            
+            <!-- Generate Button -->
+            <div style="text-align: center; margin: 30px 0;">
+                <button onclick="generateLicenseCode()" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border: none; padding: 20px 40px; border-radius: 15px; font-size: 18px; font-weight: 700; cursor: pointer; box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4); transition: all 0.3s; display: inline-flex; align-items: center; gap: 12px;">
+                    <span style="font-size: 28px;">🔑</span>
+                    <span>Generează Cod Nou</span>
+                </button>
+            </div>
+            
+            <!-- Generated Code Display -->
+            <div id="generatedCodeDisplay" style="display: none; background: white; border-radius: 20px; padding: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); margin-bottom: 30px;">
+                <h4 style="color: #1f2937; font-size: 20px; margin-bottom: 20px; text-align: center;">✅ Cod Generat cu Succes!</h4>
+                
+                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 25px; border-radius: 15px; text-align: center; margin-bottom: 20px;">
+                    <div style="color: rgba(255,255,255,0.9); font-size: 14px; margin-bottom: 10px;">CODUL DE ACCES:</div>
+                    <div id="displayedCode" style="color: white; font-size: 32px; font-weight: 900; letter-spacing: 3px; font-family: monospace;">SP-XXXX-XXXX</div>
+                </div>
+                
+                <div style="display: flex; gap: 10px;">
+                    <button onclick="copyCodeToClipboard()" style="flex: 1; background: #10b981; color: white; border: none; padding: 15px; border-radius: 12px; font-weight: 700; cursor: pointer; font-size: 16px; transition: all 0.3s;">
+                        📋 Copiază Cod
+                    </button>
+                    <button onclick="closeCodeDisplay()" style="flex: 1; background: #e5e7eb; color: #6b7280; border: none; padding: 15px; border-radius: 12px; font-weight: 700; cursor: pointer; font-size: 16px; transition: all 0.3s;">
+                        ✕ Închide
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Loading Indicator -->
+            <div id="codeGenerationLoading" style="display: none; text-align: center; padding: 30px;">
+                <div style="display: inline-block; width: 50px; height: 50px; border: 5px solid #e5e7eb; border-top-color: #667eea; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+                <p style="margin-top: 15px; color: #6b7280; font-weight: 600;">Generează cod...</p>
+            </div>
+            
+            <!-- License Codes List -->
+            <div style="background: white; border-radius: 20px; padding: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h4 style="color: #1f2937; font-size: 20px; font-weight: 700;">📋 Toate Codurile Generate</h4>
+                    <button onclick="refreshCodesList()" style="background: #f3f4f6; color: #6b7280; border: none; padding: 10px 20px; border-radius: 10px; cursor: pointer; font-weight: 600; transition: all 0.3s;">
+                        🔄 Refresh
+                    </button>
+                </div>
+                
+                <div id="codesListContainer" style="display: grid; gap: 12px; max-height: 500px; overflow-y: auto;">
+                    <div style="text-align: center; padding: 40px; color: #9ca3af;">
+                        <div style="font-size: 48px; margin-bottom: 15px;">📝</div>
+                        <p>Apasă butonul de mai sus pentru a genera primul cod</p>
                     </div>
                 </div>
             </div>
@@ -4201,6 +4263,11 @@ IMPORTANT:
             if (currentMenuItem) {
                 currentMenuItem.classList.add('active');
             }
+            
+            // If showing generate codes page, refresh the list
+            if (pageId === 'genereaza-coduri-secret') {
+                refreshCodesList();
+            }
         }
         
         // ============================================================
@@ -6066,6 +6133,161 @@ IMPORTANT:
                 attributeFilter: ['class']
             });
         });
+
+        // ============================================
+        // LICENSE CODE GENERATION FUNCTIONS
+        // ============================================
+
+        // Generate random license code
+        function generateRandomCode() {
+            const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            const numbers = '0123456789';
+            
+            let code = 'SP-';
+            
+            // Add 4 random alphanumeric characters
+            for (let i = 0; i < 4; i++) {
+                const useNumber = Math.random() > 0.5;
+                code += useNumber ? numbers[Math.floor(Math.random() * numbers.length)] : letters[Math.floor(Math.random() * letters.length)];
+            }
+            
+            code += '-';
+            
+            // Add 4 more random alphanumeric characters
+            for (let i = 0; i < 4; i++) {
+                const useNumber = Math.random() > 0.5;
+                code += useNumber ? numbers[Math.floor(Math.random() * numbers.length)] : letters[Math.floor(Math.random() * letters.length)];
+            }
+            
+            return code;
+        }
+
+        // Generate and save license code
+        async function generateLicenseCode() {
+            const loadingDiv = document.getElementById('codeGenerationLoading');
+            const displayDiv = document.getElementById('generatedCodeDisplay');
+            
+            // Show loading
+            loadingDiv.style.display = 'block';
+            displayDiv.style.display = 'none';
+            
+            try {
+                // Generate unique code
+                const newCode = generateRandomCode();
+                
+                // Save to Supabase
+                const { data, error } = await supabase
+                    .from('license_keys')
+                    .insert([
+                        {
+                            code: newCode,
+                            used: false,
+                            created_at: new Date().toISOString()
+                        }
+                    ])
+                    .select();
+                
+                if (error) {
+                    console.error('Error generating code:', error);
+                    alert('❌ Eroare la generarea codului: ' + error.message);
+                    loadingDiv.style.display = 'none';
+                    return;
+                }
+                
+                // Display the generated code
+                document.getElementById('displayedCode').textContent = newCode;
+                loadingDiv.style.display = 'none';
+                displayDiv.style.display = 'block';
+                
+                // Refresh the list
+                await refreshCodesList();
+                
+            } catch (err) {
+                console.error('Error:', err);
+                alert('❌ Eroare: ' + err.message);
+                loadingDiv.style.display = 'none';
+            }
+        }
+
+        // Copy code to clipboard
+        function copyCodeToClipboard() {
+            const code = document.getElementById('displayedCode').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                alert('✅ Cod copiat: ' + code);
+            }).catch(err => {
+                console.error('Error copying code:', err);
+                alert('❌ Eroare la copiere');
+            });
+        }
+
+        // Close code display
+        function closeCodeDisplay() {
+            document.getElementById('generatedCodeDisplay').style.display = 'none';
+        }
+
+        // Refresh codes list
+        async function refreshCodesList() {
+            const container = document.getElementById('codesListContainer');
+            
+            try {
+                // Fetch all license codes from Supabase
+                const { data: codes, error } = await supabase
+                    .from('license_keys')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+                
+                if (error) {
+                    console.error('Error fetching codes:', error);
+                    container.innerHTML = '<div style="text-align: center; padding: 20px; color: #ef4444;">❌ Eroare la încărcarea codurilor</div>';
+                    return;
+                }
+                
+                if (!codes || codes.length === 0) {
+                    container.innerHTML = `
+                        <div style="text-align: center; padding: 40px; color: #9ca3af;">
+                            <div style="font-size: 48px; margin-bottom: 15px;">📝</div>
+                            <p>Niciun cod generat încă</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                // Display codes
+                container.innerHTML = codes.map(code => {
+                    const statusColor = code.used ? '#10b981' : '#f59e0b';
+                    const statusText = code.used ? '✅ Folosit' : '⏳ Neutilizat';
+                    const createdDate = new Date(code.created_at).toLocaleString('ro-RO');
+                    
+                    return `
+                        <div style="padding: 20px; background: #f9fafb; border-radius: 12px; border-left: 4px solid ${statusColor}; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                            <div style="flex: 1; min-width: 200px;">
+                                <div style="font-weight: 700; color: #1f2937; font-size: 18px; font-family: monospace; margin-bottom: 5px;">${code.code}</div>
+                                <div style="font-size: 13px; color: #6b7280;">Creat: ${createdDate}</div>
+                                ${code.used ? `<div style="font-size: 13px; color: #10b981; margin-top: 3px;">Folosit la: ${new Date(code.used_at).toLocaleString('ro-RO')}</div>` : ''}
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span style="padding: 8px 16px; background: ${code.used ? '#d1fae5' : '#fef3c7'}; color: ${code.used ? '#065f46' : '#92400e'}; border-radius: 8px; font-size: 13px; font-weight: 700;">${statusText}</span>
+                                ${!code.used ? `<button onclick="copyToClipboard('${code.code}')" style="background: #667eea; color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 13px;">📋 Copiază</button>` : ''}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                
+            } catch (err) {
+                console.error('Error:', err);
+                container.innerHTML = '<div style="text-align: center; padding: 20px; color: #ef4444;">❌ Eroare</div>';
+            }
+        }
+
+        // Copy any code to clipboard
+        function copyToClipboard(code) {
+            navigator.clipboard.writeText(code).then(() => {
+                alert('✅ Cod copiat: ' + code);
+            }).catch(err => {
+                console.error('Error copying:', err);
+                alert('❌ Eroare la copiere');
+            });
+        }
     </script>
     <!-- Password Modal -->
     <div class="password-modal" id="passwordModal">
